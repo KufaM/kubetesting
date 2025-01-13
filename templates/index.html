@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="cs">
+    {% macro render_input(name, value, label=None, type="text", disabled=False, readonly=False, errors=None, lc=None, rc=None) %}
+    {% if label is not none and type != "hidden" %}
+        <label for="{{ name }}">{{ label }}</label>
+    {% endif %}
+    <input type="{{ type }}" name="{{ name }}" value="{{ value }}" 
+           {% if disabled %}disabled{% endif %} 
+           {% if readonly %}readonly{% endif %} 
+           id="{{ name }}">
+    {% if errors %}
+        <div class="errors">
+            {% for error in errors %}
+                <p>{{ error }}</p>
+            {% endfor %}
+        </div>
+    {% endif %}
+{% endmacro %}
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tabulka s daty</title>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+</head>
+<body>
+    <div class="container">
+        <h1>Správa tabulky</h1>
+        
+        <!-- Formulář pro přidání řádku -->
+        <form action="/add" method="POST">
+            <input type="text" name="jmeno" placeholder="Jméno" required>
+            <input type="number" name="vek" placeholder="Věk" required>
+            <button type="submit">Přidat řádek</button>
+        </form>
+        
+        <h2>Tabulka</h2>
+        <table class="table table-bordered">
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Jméno</th>
+                    <th>Věk</th>
+                    <th>Akce</th>
+                </tr>
+            </thead>
+            <tbody>
+                <!-- Iterace přes řádky získané z databáze -->
+                {% for row in data %}
+                <tr>
+                    <td>{{ row.id }}</td>
+                    <td>{{ row.jmeno }}</td>
+                    <td>{{ row.vek }}</td>
+                    <td><a href="{{ url_for('delete_row', id=row.id) }}">Smazat</a></td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</body>
+</html>
